@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RealEstateListingApi.Domain
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RealEstateListingApi Solution", "RealEstateListingApi Solution", "{AD738742-AC4A-479B-BCB1-8F5CA1721CFB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstateListingApi.Test", "RealEstateListingApi.Test\RealEstateListingApi.Test.csproj", "{B8F334EE-3F7A-4C08-8328-D3F95784C3C2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{03EBFE9A-E2C4-4BBF-88C7-36E0381F1911}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03EBFE9A-E2C4-4BBF-88C7-36E0381F1911}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03EBFE9A-E2C4-4BBF-88C7-36E0381F1911}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8F334EE-3F7A-4C08-8328-D3F95784C3C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8F334EE-3F7A-4C08-8328-D3F95784C3C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8F334EE-3F7A-4C08-8328-D3F95784C3C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8F334EE-3F7A-4C08-8328-D3F95784C3C2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,6 +50,7 @@ Global
 		{1C2B4ED2-18CB-4D09-AD74-7663492BC53C} = {AD738742-AC4A-479B-BCB1-8F5CA1721CFB}
 		{8C345B7A-6E76-469F-822F-4C26E08BE554} = {AD738742-AC4A-479B-BCB1-8F5CA1721CFB}
 		{03EBFE9A-E2C4-4BBF-88C7-36E0381F1911} = {AD738742-AC4A-479B-BCB1-8F5CA1721CFB}
+		{B8F334EE-3F7A-4C08-8328-D3F95784C3C2} = {AD738742-AC4A-479B-BCB1-8F5CA1721CFB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {763283A5-CDF6-4449-916F-689A0728F97D}

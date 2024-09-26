@@ -5,7 +5,7 @@ using RealEstateListingApi.Application.UnitOfWork;
 using RealEstateListingApi.Domain.Models;
 
 namespace RealEstateListingApi.Application.Listings.Delete;
-internal class DeleteListingCommandHandler(IUnitOfWork unitOfWork, IRepository<Listing> repository) : IRequestHandler<DeleteListingCommand>
+public class DeleteListingCommandHandler(IUnitOfWork unitOfWork, IRepository<Listing> repository) : IRequestHandler<DeleteListingCommand>
 {
     public async Task Handle(DeleteListingCommand request, CancellationToken cancellationToken)
     {

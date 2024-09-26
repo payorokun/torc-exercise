@@ -2,6 +2,10 @@
 
 public interface ITransactionScope
 {
-    ITransactionScope WithActions(Action action);
+    ITransactionScopeWithActions WithActions(Action action);
+}
+
+public interface ITransactionScopeWithActions : ITransactionScope
+{
     Task Commit();
 }

@@ -4,17 +4,17 @@ using RealEstateListingApi.Infrastructure.Data;
 namespace RealEstateListingApi.Infrastructure.UnitOfWork;
 public class UnitOfWork(ApplicationDbContext dbContext) : IUnitOfWork
 {
-    private class TransactionScope(ApplicationDbContext dbContext) : ITransactionScope
+    private class TransactionScope(ApplicationDbContext dbContext) : ITransactionScopeWithActions
     {
         private readonly List<Action> _actions = new();
         private readonly bool _isInMemory = dbContext.Database.ProviderName!.Equals("Microsoft.EntityFrameworkCore.InMemory");
-        public ITransactionScope WithActions(Action action)
+        public ITransactionScopeWithActions WithActions(Action action)
         {
             _actions.Add(action);
             return this;
         }
 
-        public async Task Commit()
+        async Task ITransactionScopeWithActions.Commit()
         {
             if (!_isInMemory)
             {

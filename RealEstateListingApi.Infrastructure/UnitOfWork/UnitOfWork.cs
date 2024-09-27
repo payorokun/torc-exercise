@@ -1,44 +1,41 @@
-﻿using RealEstateListingApi.Application.UnitOfWork;
+﻿using RealEstateListingApi.Application.Repositories;
+using RealEstateListingApi.Application.UnitOfWork;
 using RealEstateListingApi.Infrastructure.Data;
 
 namespace RealEstateListingApi.Infrastructure.UnitOfWork;
-public class UnitOfWork(ApplicationDbContext dbContext) : IUnitOfWork
+public class UnitOfWork(IApplicationDbContext dbContext) : IUnitOfWork
 {
-    private class TransactionScope(ApplicationDbContext dbContext) : ITransactionScopeWithActions
+    private class TransactionScope(IApplicationDbContext dbContext) : 
+        ITransactionScope, ITransactionScopeReady, ITransactionBuilder
     {
         private readonly List<Action> _actions = new();
-        private readonly bool _isInMemory = dbContext.Database.ProviderName!.Equals("Microsoft.EntityFrameworkCore.InMemory");
-        public ITransactionScopeWithActions WithActions(Action action)
+        public ITransactionScopeWithRepo<TEntity> WithRepo<TEntity>(IRepositoryWrite<TEntity> repository)
         {
-            _actions.Add(action);
-            return this;
+            return new TransactionScopeForRepository<TEntity>(
+                repository, 
+                this as ITransactionScopeReady, 
+                this as ITransactionBuilder);
         }
 
-        async Task ITransactionScopeWithActions.Commit()
+        void ITransactionBuilder.AppendAction(Action action)
         {
-            if (!_isInMemory)
-            {
-                await dbContext.Database.BeginTransactionAsync();
-                try
-                {
-                    await Execute();
-                    await dbContext.Database.CommitTransactionAsync();
-                    return;
-                }
-                catch (Exception e)
-                {
-                    await dbContext.Database.RollbackTransactionAsync();
-                    throw;
-                }
-            }
-            //no transactions with memory databases
+            _actions.Add(action);
+        }
+
+        async Task ITransactionScopeReady.CommitAsync()
+        {
+            await dbContext.BeginTransactionAsync();
             try
             {
                 await Execute();
+                await dbContext.CommitTransactionAsync();
+                return;
             }
             catch (Exception e)
             {
+                await dbContext.RollbackTransactionAsync();
                 throw;
+
             }
         }
 
@@ -49,6 +46,42 @@ public class UnitOfWork(ApplicationDbContext dbContext) : IUnitOfWork
                 action();
             }
             await dbContext.SaveChangesAsync();
+        }
+
+        private class TransactionScopeForRepository<TEntity>(
+            IRepositoryWrite<TEntity> repository,
+            ITransactionScopeReady transactionScopeReady,
+            ITransactionBuilder transactionBuilder) : ITransactionScopeWithRepo<TEntity>
+        {
+            public ITransactionScopeWithRepo<TOtherEntity> AndForRepo<TOtherEntity>(
+                IRepositoryWrite<TOtherEntity> otherRepository)
+            {
+                return new TransactionScopeForRepository<TOtherEntity>(
+                    otherRepository, transactionScopeReady, transactionBuilder);
+            }
+
+            public ITransactionScopeWithRepo<TEntity> Add(TEntity item)
+            {
+                transactionBuilder.AppendAction(()=> repository.Add(item));
+                return this;
+            }
+
+            public ITransactionScopeWithRepo<TEntity> Update(TEntity item)
+            {
+                transactionBuilder.AppendAction(() => repository.Update(item));
+                return this;
+            }
+
+            public ITransactionScopeWithRepo<TEntity> Delete(TEntity item)
+            {
+                transactionBuilder.AppendAction(() => repository.Delete(item));
+                return this;
+            }
+
+            public ITransactionScopeReady Ready()
+            {
+                return transactionScopeReady;
+            }
         }
     }
 

@@ -17,11 +17,10 @@ internal class UpdateListingCommandHandler(IUnitOfWork unitOfWork, IRepository<L
         try
         {
             await unitOfWork.CreateTransaction()
-                .WithActions(() =>
-                {
-                    repository.Update(request.UpdatedListing);
-                })
-                .Commit();
+                .WithRepo(repository)
+                .Update(request.UpdatedListing)
+                .Ready()
+                .CommitAsync();
             return request.UpdatedListing;
         }
         catch (DbUpdateConcurrencyException e)

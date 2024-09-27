@@ -1,11 +1,28 @@
-﻿namespace RealEstateListingApi.Application.UnitOfWork;
+﻿using RealEstateListingApi.Application.Repositories;
+
+namespace RealEstateListingApi.Application.UnitOfWork;
 
 public interface ITransactionScope
 {
-    ITransactionScopeWithActions WithActions(Action action);
+    ITransactionScopeWithRepo<TEntity> WithRepo<TEntity>(
+        IRepositoryWrite<TEntity> repository);
 }
 
-public interface ITransactionScopeWithActions : ITransactionScope
+public interface ITransactionBuilder
 {
-    Task Commit();
+    void AppendAction(Action action);
+}
+public interface ITransactionScopeWithRepo<in TEntity>
+{
+    ITransactionScopeWithRepo<TOtherEntity> AndForRepo<TOtherEntity>(
+        IRepositoryWrite<TOtherEntity> otherRepository);
+    ITransactionScopeWithRepo<TEntity> Add(TEntity item);
+    ITransactionScopeWithRepo<TEntity> Update(TEntity item);
+    ITransactionScopeWithRepo<TEntity> Delete(TEntity item);
+    ITransactionScopeReady Ready();
+}
+
+public interface ITransactionScopeReady : ITransactionScope
+{
+    Task CommitAsync();
 }

@@ -10,11 +10,10 @@ public class CreateListingCommandHandler(IUnitOfWork unitOfWork, IRepository<Lis
     public async Task<Listing> Handle(CreateListingCommand request, CancellationToken cancellationToken)
     {
         await unitOfWork.CreateTransaction()
-            .WithActions(() =>
-            {
-                repository.Add(request.NewListing);
-            })
-        .Commit();
+            .WithRepo(repository)
+            .Add(request.NewListing)
+            .Ready()
+            .CommitAsync();
         return request.NewListing;
     }
 }

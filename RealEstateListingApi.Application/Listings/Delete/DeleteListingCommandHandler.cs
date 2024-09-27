@@ -12,8 +12,10 @@ public class DeleteListingCommandHandler(IUnitOfWork unitOfWork, IRepository<Lis
         try
         {
             await unitOfWork.CreateTransaction()
-                .WithActions(() => { repository.Delete(new Listing {Id = request.Id}); })
-                .Commit();
+                .WithRepo(repository)
+                .Delete(new Listing {Id = request.Id})
+                .Ready()
+                .CommitAsync();
         }
         catch (DbUpdateConcurrencyException e)
         {
